@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kasir Struk SPBU</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef0ee;--sf:#fff;--tx:#1c2321;--mu:#66726d;--ln:#d5dad7;--ac:#0f6b4f;--acx:#fff;--dn:#b3372b;--paper:#fff;--ink:#111;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121715;--sf:#1b2320;--tx:#e6ece9;--mu:#92a19a;--ln:#2f3b36;--ac:#3fbf93;--acx:#08140f;--dn:#ef7d70}}
+:root[data-theme="dark"]{--bg:#121715;--sf:#1b2320;--tx:#e6ece9;--mu:#92a19a;--ln:#2f3b36;--ac:#3fbf93;--acx:#08140f;--dn:#ef7d70}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 "IBM Plex Sans",system-ui,sans-serif}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--sf);border-bottom:1px solid var(--ln);position:sticky;top:env(safe-area-inset-top,0px);z-index:5;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:600;margin-right:auto}
+nav{display:flex;gap:4px}
+nav button,.btn{font:inherit;border:1px solid var(--ln);background:var(--sf);color:var(--tx);padding:10px 16px;border-radius:8px;cursor:pointer;min-height:44px}
+nav button[aria-selected="true"]{background:var(--ac);color:var(--acx);border-color:var(--ac)}
+.btn.pri{background:var(--ac);color:var(--acx);border-color:var(--ac);font-weight:600}
+.btn.dng{color:var(--dn);border-color:var(--dn)}
+.btn.sm{padding:6px 10px;min-height:34px;font-size:14px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+main{max-width:1100px;margin:0 auto;padding:16px}
+.grid{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:16px}
+.card h2{font-size:16px;margin:0 0 12px}
+label{display:block;font-size:14px;color:var(--mu);margin:10px 0 4px}
+input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--tx);min-height:44px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;min-width:80px}
+.seg button[aria-pressed="true"]{background:var(--ac);color:var(--acx);border-color:var(--ac)}
+.total{font:600 28px "IBM Plex Mono",monospace;margin:14px 0 4px}
+.err{color:var(--dn);font-size:14px;min-height:20px;margin:6px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.actions .btn{flex:1}
+.hide{display:none!important}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--ln);text-align:left;white-space:nowrap}
+.tbl td.n,.tbl th.n{text-align:right;font-family:"IBM Plex Mono",monospace}
+.scroll{overflow-x:auto}
+.void{color:var(--dn);text-decoration:line-through}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
+.stat b{display:block;font:600 20px "IBM Plex Mono",monospace}
+.stat span{color:var(--mu);font-size:14px}
+.fuelrow{display:grid;grid-template-columns:1fr 120px 44px;gap:8px;margin-bottom:8px}
+.toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:8px;z-index:9}
+/* struk */
+.stage{display:flex;justify-content:center;background:var(--bg);padding:12px;border-radius:8px;border:1px dashed var(--ln)}
+.rc{background:var(--paper);color:var(--ink);font:12px/1.35 "IBM Plex Mono","Courier New",monospace;padding:12px 10px;width:58mm;max-width:100%}
+.rc.w80{width:80mm;font-size:13px}
+.rc .c{text-align:center}.rc .b{font-weight:600}
+.rc hr{border:0;border-top:1px dashed #000;margin:6px 0}
+.rc .l{display:flex;justify-content:space-between;gap:8px}
+.rc img{max-width:80%;max-height:40px;display:block;margin:0 auto 4px}
+.rc .wm{border:2px solid #000;text-align:center;font-weight:600;margin:6px 0;padding:2px}
+#printArea{display:none}
+@media print{
+ body>*:not(#printArea){display:none!important}
+ #printArea{display:block}
+ body{background:#fff}
+ .rc{width:100%!important;padding:2mm}
+}
+</style>
+</head>
+<body>
+<header>
+ <h1 id="brand">Kasir Struk SPBU</h1>
+ <nav role="tablist">
+  <button role="tab" data-tab="kasir" aria-selected="true">Kasir</button>
+  <button role="tab" data-tab="riwayat" aria-selected="false">Riwayat</button>
+  <button role="tab" data-tab="atur" aria-selected="false">Pengaturan</button>
+ </nav>
+ <button class="btn" id="themeBtn" aria-label="Ganti tema">Tema</button>
+</header>
+<main>
+
+<section id="tab-kasir" class="grid">
+ <div class="card">
+  <h2>Transaksi baru</h2>
+  <label for="fuel">Jenis BBM</label>
+  <select id="fuel"></select>
+  <label>Hitung berdasarkan</label>
+  <div class="seg">
+   <button class="btn" data-mode="liter" aria-pressed="true">Liter</button>
+   <button class="btn" data-mode="rupiah" aria-pressed="false">Nominal Rp</button>
+  </div>
+  <div class="row">
+   <div><label for="liter">Volume (liter)</label><input id="liter" type="number" inputmode="decimal" step="0.01" min="0"></div>
+   <div><label for="rupiah">Nominal (Rp)</label><input id="rupiah" type="number" inputmode="numeric" step="1" min="0"></div>
+  </div>
+  <div class="total" id="totalTxt">Rp 0</div>
+  <div class="row">
+   <div><label for="pump">Pompa / nozzle</label><input id="pump" placeholder="mis. 3 / 1"></div>
+   <div><label for="plate">Nomor polisi (opsional)</label><input id="plate" placeholder="P 1234 AB" style="text-transform:uppercase"></div>
+  </div>
+  <label>Metode bayar</label>
+  <div class="seg" id="payseg">
+   <button class="btn" data-pay="Tunai" aria-pressed="true">Tunai</button>
+   <button class="btn" data-pay="Debit" aria-pressed="false">Debit</button>
+   <button class="btn" data-pay="QRIS" aria-pressed="false">QRIS</button>
+   <button class="btn" data-pay="E-wallet" aria-pressed="false">E-wallet</button>
+  </div>
+  <div id="cashBox" class="row">
+   <div><label for="cash">Uang diterima (Rp)</label><input id="cash" type="number" inputmode="numeric" min="0"></div>
+   <div><label>Kembalian</label><input id="change" readonly value="Rp 0"></div>
+  </div>
+  <div class="row">
+   <div><label for="when">Tanggal &amp; jam (WIB)</label><input id="when" type="datetime-local"></div>
+   <div><label for="cashier">Kasir</label><input id="cashier"></div>
+  </div>
+  <div class="err" id="err" role="alert"></div>
+  <div class="actions">
+   <button class="btn pri" id="printBtn">Cetak struk</button>
+   <button class="btn" id="pdfBtn">Simpan PDF</button>
+  </div>
+  <p style="color:var(--mu);font-size:13px;margin:10px 0 0">Untuk PDF, pilih “Simpan sebagai PDF” pada dialog cetak. Keduanya menyimpan transaksi ke riwayat.</p>
+ </div>
+ <div>
+  <div class="card"><h2>Pratinjau struk</h2><div class="stage"><div id="preview"></div></div></div>
+ </div>
+</section>
+
+<section id="tab-riwayat" class="hide">
+ <div class="card">
+  <h2>Riwayat transaksi</h2>
+  <div class="row" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+   <div><label for="fDate">Tanggal</label><input id="fDate" type="date"></div>
+   <div><label for="fFuel">Jenis BBM</label><select id="fFuel"></select></div>
+   <div><label for="fPay">Metode bayar</label><select id="fPay"><option value="">Semua</option><option>Tunai</option><option>Debit</option><option>QRIS</option><option>E-wallet</option></select></div>
+  </div>
+  <div class="actions"><button class="btn" id="allDates">Semua tanggal</button><button class="btn" id="csvBtn">Ekspor CSV</button></div>
+  <div class="sum" id="sum"></div>
+  <div class="scroll" style="margin-top:12px"><table class="tbl"><thead><tr><th>No. transaksi</th><th>Jam</th><th>BBM</th><th class="n">Liter</th><th class="n">Total</th><th>Bayar</th><th></th></tr></thead><tbody id="hist"></tbody></table></div>
+  <p id="emptyHist" style="color:var(--mu)">Belum ada transaksi pada filter ini. Buat transaksi di tab Kasir.</p>
+ </div>
+</section>
+
+<section id="tab-atur" class="hide">
+ <div class="card">
+  <h2>Data stasiun</h2>
+  <div class="row">
+   <div><label for="sName">Nama SPBU</label><input id="sName"></div>
+   <div><label for="sNo">Nomor SPBU</label><input id="sNo" placeholder="64.xxx.xx"></div>
+  </div>
+  <label for="sAddr">Alamat</label><input id="sAddr">
+  <div class="row">
+   <div><label for="sCity">Kota</label><input id="sCity"></div>
+   <div><label for="sPhone">Telepon</label><input id="sPhone"></div>
+  </div>
+  <div class="row">
+   <div><label for="sCash">Kasir default</label><input id="sCash"></div>
+   <div><label for="sWidth">Lebar kertas</label><select id="sWidth"><option value="58">58 mm</option><option value="80">80 mm</option></select></div>
+  </div>
+  <label for="sLogo">Logo (unggah sendiri, opsional)</label>
+  <input id="sLogo" type="file" accept="image/*">
+  <img id="logoPrev" alt="Logo saat ini" style="max-height:40px;display:block;margin:8px 0;background:#fff;padding:4px;border-radius:4px"><div class="actions"><button class="btn" id="defLogo">Pakai logo bawaan</button><button class="btn" id="rmLogo">Tanpa logo</button></div>
+  <h2 style="margin-top:20px">Harga BBM per liter</h2>
+  <div id="fuelList"></div>
+  <div class="actions" style="max-width:260px"><button class="btn" id="addFuel">Tambah BBM</button></div>
+  <h2 style="margin-top:20px">Printer thermal (ESC/POS)</h2><label for="sMode">Mode cetak</label><select id="sMode"><option value="browser">Dialog cetak browser</option><option value="escpos">Langsung ke printer ESC/POS</option></select><div class="actions"><button class="btn" id="usbBtn">Sambungkan USB</button><button class="btn" id="btBtn">Sambungkan Bluetooth</button><button class="btn" id="testBtn">Tes cetak</button></div><p id="pstat" style="color:var(--mu);font-size:13px">Belum tersambung. Butuh Chrome atau Edge; koneksi harus diulang setiap halaman dibuka. Jika gagal, struk dicetak lewat dialog browser.</p><div class="actions" style="max-width:260px"><button class="btn pri" id="saveSet">Simpan pengaturan</button></div><h2 style="margin-top:20px">Cadangan data</h2><div class="actions"><button class="btn" id="expJson">Ekspor cadangan (JSON)</button><button class="btn" id="impJson">Impor cadangan</button></div><input id="impFile" type="file" accept=".json,application/json" class="hide"><p style="color:var(--mu);font-size:13px">Cadangan berisi pengaturan dan semua transaksi. Impor menambahkan transaksi yang belum ada (berdasarkan nomor) dan menanyakan dulu sebelum menimpa pengaturan.</p>
+ </div>
+</section>
+</main>
+<div id="printArea"></div>
+<div class="toast hide" id="toast" role="status"></div>
+
+<script>
+(function(){
+var DEF={name:"SPBU Contoh",no:"00.000.00",addr:"Jl. Raya No. 1",city:"Jember",phone:"",cashier:"Operator 1",width:"58",
+fuels:[{n:"Pertalite",p:10000},{n:"Pertamax",p:12200},{n:"Pertamax Turbo",p:13100},{n:"Dexlite",p:13000},{n:"Pertamina Dex",p:13500},{n:"Bio Solar",p:6800}]};
+var mem={};var LOGO_DEF="data:image/png;base64,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";function getLogo(){return S.logo===undefined?LOGO_DEF:S.logo}
+function ld(k,d){try{var v=localStorage.getItem(k);if(v)return JSON.parse(v)}catch(e){}return mem[k]!==undefined?mem[k]:d}
+function sv(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var S=Object.assign({},DEF,ld("spbu_set",{}));
+var T=ld("spbu_tx",[]);
+var mode="liter",pay="Tunai",$=function(i){return document.getElementById(i)};
+var rp=function(n){return "Rp "+Math.round(n).toLocaleString("id-ID")};
+var lt=function(n){return Number(n).toLocaleString("id-ID",{minimumFractionDigits:2,maximumFractionDigits:2})};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+function nowWIB(){var p={};new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Jakarta",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date()).forEach(function(x){p[x.type]=x.value});return p.year+"-"+p.month+"-"+p.day+"T"+p.hour+":"+p.minute}
+function toast(m){var t=$("toast");t.textContent=m;t.classList.remove("hide");clearTimeout(toast.t);toast.t=setTimeout(function(){t.classList.add("hide")},2500)}
+function fmtDate(iso){var a=iso.split("T"),d=a[0].split("-");return d[2]+"/"+d[1]+"/"+d[0]+" "+a[1]+" WIB"}
+
+/* tema & tab */
+$("themeBtn").onclick=function(){var r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=dark?"light":"dark"};
+document.querySelectorAll("[data-tab]").forEach(function(b){b.onclick=function(){show(b.dataset.tab)}});
+function show(t){["kasir","riwayat","atur"].forEach(function(k){$("tab-"+k).classList.toggle("hide",k!==t)});
+ document.querySelectorAll("[data-tab]").forEach(function(b){b.setAttribute("aria-selected",b.dataset.tab===t)});
+ if(t==="riwayat")renderHist();if(t==="atur")loadSet()}
+
+/* form */
+function fuelSel(){var s=$("fuel"),v=s.value;s.innerHTML=S.fuels.map(function(f,i){return'<option value="'+i+'">'+esc(f.n)+" — "+rp(f.p)+"/L</option>"}).join("");if(v)s.value=v;
+ var ff=$("fFuel");ff.innerHTML='<option value="">Semua</option>'+S.fuels.map(function(f){return"<option>"+esc(f.n)+"</option>"}).join("")}
+function cur(){var f=S.fuels[+$("fuel").value]||S.fuels[0];var price=f.p,liter=0,total=0;
+ if(mode==="liter"){liter=Math.round((parseFloat($("liter").value)||0)*100)/100;total=Math.round(liter*price)}
+ else{total=Math.round(parseFloat($("rupiah").value)||0);liter=Math.round(total/price*100)/100}
+ var cash=pay==="Tunai"?Math.round(parseFloat($("cash").value)||0):total;
+ return{fuel:f.n,price:price,liter:liter,total:total,pay:pay,cash:cash,change:cash-total,pump:$("pump").value.trim(),plate:$("plate").value.trim().toUpperCase(),when:$("when").value||nowWIB(),cashier:$("cashier").value.trim()||S.cashier}}
+function sync(src){var c=cur();
+ if(mode==="liter"&&src!=="mode")$("rupiah").value=c.total||"";
+ if(mode==="rupiah"&&src!=="mode")$("liter").value=c.liter||"";
+ $("liter").readOnly=mode!=="liter";$("rupiah").readOnly=mode!=="rupiah";
+ $("totalTxt").textContent=rp(c.total);
+ $("cashBox").classList.toggle("hide",pay!=="Tunai");
+ $("change").value=rp(Math.max(0,c.change));
+ $("preview").innerHTML=rcHTML(c,"PRATINJAU",false)}
+document.querySelectorAll("[data-mode]").forEach(function(b){b.onclick=function(){mode=b.dataset.mode;document.querySelectorAll("[data-mode]").forEach(function(x){x.setAttribute("aria-pressed",x===b)});sync("mode")}});
+document.querySelectorAll("[data-pay]").forEach(function(b){b.onclick=function(){pay=b.dataset.pay;document.querySelectorAll("[data-pay]").forEach(function(x){x.setAttribute("aria-pressed",x===b)});sync()}});
+["fuel","liter","rupiah","cash","pump","plate","when","cashier"].forEach(function(i){$(i).addEventListener("input",function(){sync(i)})});
+
+/* struk */
+function rcHTML(t,tag,copy){var w=S.width==="80"?" w80":"",n=S.width==="80"?42:32;
+ var L=function(a,b){return'<div class="l"><span>'+esc(a)+'</span><span>'+esc(b)+"</span></div>"};
+ var h='<div class="rc'+w+'">';
+ var lg=getLogo();if(lg)h+='<img src="'+lg+'" alt="">';
+ h+='<div class="c b">'+esc(S.name)+"</div>";
+ if(S.no)h+='<div class="c">No. SPBU '+esc(S.no)+"</div>";
+ if(S.addr)h+='<div class="c">'+esc(S.addr)+"</div>";
+ if(S.city)h+='<div class="c">'+esc(S.city)+(S.phone?" • Telp "+esc(S.phone):"")+"</div>";
+ else if(S.phone)h+='<div class="c">Telp '+esc(S.phone)+"</div>";
+ h+="<hr>";
+ if(copy)h+='<div class="wm">SALINAN</div>';
+ if(t.voided)h+='<div class="wm">DIBATALKAN</div>';
+ h+=L("Tanggal",fmtDate(t.when).split(" ")[0])+L("Jam",t.when.split("T")[1]+" WIB")+L("No.",t.id||tag)+L("Kasir",t.cashier);
+ if(t.pump)h+=L("Pompa",t.pump);
+ if(t.plate)h+=L("No. Pol",t.plate);
+ h+="<hr>"+'<div class="b">'+esc(t.fuel)+"</div>"+L(lt(t.liter)+" L x "+rp(t.price),rp(t.total))+"<hr>"+
+ '<div class="l b"><span>TOTAL</span><span>'+rp(t.total)+"</span></div>"+L("Bayar",t.pay);
+ if(t.pay==="Tunai")h+=L("Tunai",rp(t.cash))+L("Kembali",rp(Math.max(0,t.change)));
+ h+="<hr>"+'<div class="c">Terima kasih</div><div class="c">Selamat jalan, berkendara aman</div></div>';
+ return h}
+
+/* simpan & cetak */
+function nextId(d){var day=d.split("T")[0].replace(/-/g,""),c=T.filter(function(t){return t.id.indexOf("TRX-"+day)===0}).length+1;return"TRX-"+day+"-"+String(c).padStart(4,"0")}
+function doPrint(html,w,t,copy){if(S.mode==="escpos"&&P){P.send(enc(t,copy)).then(function(){toast("Terkirim ke printer")}).catch(function(){toast("Printer gagal, memakai dialog cetak");bp(html,w)});return}bp(html,w)}
+function bp(html,w){var pa=$("printArea");pa.innerHTML=html;
+ var st=document.getElementById("pgStyle");if(!st){st=document.createElement("style");st.id="pgStyle";document.head.appendChild(st)}
+ st.textContent="@page{size:"+w+"mm auto;margin:0}";
+ setTimeout(function(){window.print()},60)}
+function submit(){var c=cur(),e="";
+ if(!(c.liter>0)||!(c.total>0))e="Isi volume atau nominal lebih dari 0.";
+ else if(c.pay==="Tunai"&&c.cash<c.total)e="Uang diterima kurang dari total ("+rp(c.total)+").";
+ else if(!c.when)e="Tanggal dan jam wajib diisi.";
+ $("err").textContent=e;if(e)return;
+ c.id=nextId(c.when);c.voided=false;T.push(c);sv("spbu_tx",T);
+ doPrint(rcHTML(c,c.id,false),S.width,c,false);toast("Transaksi "+c.id+" disimpan");
+ $("liter").value="";$("rupiah").value="";$("cash").value="";$("pump").value="";$("plate").value="";$("when").value=nowWIB();sync("mode")}
+$("printBtn").onclick=submit;$("pdfBtn").onclick=submit;
+
+/* riwayat */
+function filtered(){var d=$("fDate").value,f=$("fFuel").value,p=$("fPay").value;
+ return T.filter(function(t){return(!d||t.when.indexOf(d)===0)&&(!f||t.fuel===f)&&(!p||t.pay===p)}).sort(function(a,b){return a.when<b.when?1:-1})}
+function renderHist(){var rows=filtered(),ok=rows.filter(function(t){return!t.voided});
+ $("emptyHist").classList.toggle("hide",rows.length>0);
+ $("hist").innerHTML=rows.map(function(t){var k=t.voided?' class="void"':"";
+  return"<tr><td"+k+">"+esc(t.id)+"</td><td>"+t.when.split("T")[1]+"</td><td>"+esc(t.fuel)+'</td><td class="n">'+lt(t.liter)+'</td><td class="n">'+rp(t.total)+"</td><td>"+esc(t.pay)+"</td><td>"+
+  '<button class="btn sm" data-re="'+t.id+'">Cetak ulang</button> '+(t.voided?'<span title="'+esc(t.reason||"")+'">Batal</span>':'<button class="btn sm dng" data-vd="'+t.id+'">Batalkan</button>')+"</td></tr>"}).join("");
+ var byF={},byP={},tot=0,lit=0;ok.forEach(function(t){byF[t.fuel]=(byF[t.fuel]||0)+t.liter;byP[t.pay]=(byP[t.pay]||0)+t.total;tot+=t.total;lit+=t.liter});
+ var s='<div class="stat"><span>Total pendapatan</span><b>'+rp(tot)+'</b></div><div class="stat"><span>Total volume</span><b>'+lt(lit)+" L</b></div>";
+ s+='<div class="stat"><span>Liter per BBM</span>'+(Object.keys(byF).map(function(k){return"<div>"+esc(k)+": "+lt(byF[k])+" L</div>"}).join("")||"-")+"</div>";
+ s+='<div class="stat"><span>Pendapatan per metode</span>'+(Object.keys(byP).map(function(k){return"<div>"+esc(k)+": "+rp(byP[k])+"</div>"}).join("")||"-")+"</div>";
+ $("sum").innerHTML=s;
+ document.querySelectorAll("[data-re]").forEach(function(b){b.onclick=function(){var t=T.find(function(x){return x.id===b.dataset.re});doPrint(rcHTML(t,t.id,true),S.width,t,true)}});
+ document.querySelectorAll("[data-vd]").forEach(function(b){b.onclick=function(){var r=prompt("Alasan pembatalan (wajib):");if(!r||!r.trim()){toast("Pembatalan dibatalkan: alasan kosong");return}
+  var t=T.find(function(x){return x.id===b.dataset.vd});t.voided=true;t.reason=r.trim();sv("spbu_tx",T);renderHist()}})}
+["fDate","fFuel","fPay"].forEach(function(i){$(i).onchange=renderHist});
+$("allDates").onclick=function(){$("fDate").value="";renderHist()};
+$("csvBtn").onclick=function(){var rows=filtered(),q=function(v){return'"'+String(v==null?"":v).replace(/"/g,'""')+'"'};
+ var csv=["No,Waktu,BBM,Harga/L,Liter,Total,Bayar,Kasir,Pompa,NoPol,Status,Alasan"].concat(rows.map(function(t){return[t.id,t.when,t.fuel,t.price,t.liter,t.total,t.pay,t.cashier,t.pump,t.plate,t.voided?"BATAL":"OK",t.reason].map(q).join(",")})).join("\n");
+ saveFile("transaksi-spbu.csv","\ufeff"+csv)};
+
+/* pengaturan */
+var fuelsDraft=[];
+function loadSet(){updPrev();$("sName").value=S.name;$("sNo").value=S.no;$("sAddr").value=S.addr;$("sCity").value=S.city;$("sPhone").value=S.phone;$("sCash").value=S.cashier;$("sWidth").value=S.width;$("sMode").value=S.mode||"browser";
+ fuelsDraft=S.fuels.map(function(f){return{n:f.n,p:f.p}});drawFuels()}
+function drawFuels(){$("fuelList").innerHTML=fuelsDraft.map(function(f,i){return'<div class="fuelrow"><input data-fn="'+i+'" value="'+esc(f.n)+'" aria-label="Nama BBM"><input data-fp="'+i+'" type="number" value="'+f.p+'" aria-label="Harga per liter"><button class="btn sm dng" data-fd="'+i+'" aria-label="Hapus">×</button></div>'}).join("");
+ document.querySelectorAll("[data-fn]").forEach(function(e){e.oninput=function(){fuelsDraft[e.dataset.fn].n=e.value}});
+ document.querySelectorAll("[data-fp]").forEach(function(e){e.oninput=function(){fuelsDraft[e.dataset.fp].p=parseFloat(e.value)||0}});
+ document.querySelectorAll("[data-fd]").forEach(function(e){e.onclick=function(){fuelsDraft.splice(+e.dataset.fd,1);drawFuels()}})}
+$("addFuel").onclick=function(){fuelsDraft.push({n:"BBM baru",p:10000});drawFuels()};
+$("sLogo").onchange=function(){var f=this.files[0];if(!f)return;if(f.size>300000){toast("Logo terlalu besar (maks 300 KB)");this.value="";return}
+ var r=new FileReader();r.onload=function(){S.logo=r.result;updPrev();toast("Logo dimuat, klik Simpan pengaturan")};r.readAsDataURL(f)};
+function updPrev(){var l=getLogo(),p=$("logoPrev");p.style.display=l?"block":"none";if(l)p.src=l;sync("mode")}
+$("rmLogo").onclick=function(){S.logo="";updPrev();toast("Struk tanpa logo, klik Simpan pengaturan")};
+$("defLogo").onclick=function(){delete S.logo;updPrev();toast("Logo bawaan dipakai, klik Simpan pengaturan")};
+$("saveSet").onclick=function(){var fs=fuelsDraft.filter(function(f){return f.n.trim()&&f.p>0});
+ if(!fs.length){toast("Minimal satu BBM dengan harga valid");return}
+ S.name=$("sName").value.trim()||DEF.name;S.no=$("sNo").value.trim();S.addr=$("sAddr").value.trim();S.city=$("sCity").value.trim();S.phone=$("sPhone").value.trim();S.cashier=$("sCash").value.trim()||DEF.cashier;S.width=$("sWidth").value;S.mode=$("sMode").value;S.fuels=fs;
+ sv("spbu_set",S);init();toast("Pengaturan disimpan")};
+
+/* unduh file */
+function saveFile(name,data){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:/\.json$/.test(name)?"application/json":"text/csv"}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},1000);toast("File disimpan")}
+
+/* ESC/POS */
+var P=null;
+function enc(t,copy){var n=S.width==="80"?48:32,o=[];
+ var raw=function(a){for(var i=0;i<a.length;i++)o.push(a[i])};
+ var txt=function(s){s=String(s);for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);o.push(c>31&&c<127?c:63)}o.push(10)};
+ var ctr=function(s,b){raw([27,97,1,27,69,b?1:0]);txt(s);raw([27,97,0,27,69,0])};
+ var lr=function(a,b){a=String(a);b=String(b);if(a.length+b.length>=n)a=a.slice(0,Math.max(0,n-b.length-1));txt(a+" ".repeat(Math.max(1,n-a.length-b.length))+b)};
+ var hr=function(){txt("-".repeat(n))};
+ raw([27,64]);ctr(S.name,1);
+ if(S.no)ctr("No. SPBU "+S.no);if(S.addr)ctr(S.addr);
+ var cl=(S.city||"")+(S.phone?(S.city?" - ":"")+"Telp "+S.phone:"");if(cl)ctr(cl);
+ hr();if(copy)ctr("*** SALINAN ***",1);
+ var d=t.when.split("T")[0].split("-");
+ lr("Tanggal",d[2]+"/"+d[1]+"/"+d[0]);lr("Jam",t.when.split("T")[1]+" WIB");lr("No.",t.id);lr("Kasir",t.cashier);
+ if(t.pump)lr("Pompa",t.pump);if(t.plate)lr("No. Pol",t.plate);
+ hr();raw([27,69,1]);txt(t.fuel);raw([27,69,0]);lr(lt(t.liter)+" L x "+rp(t.price),rp(t.total));hr();
+ raw([27,69,1]);lr("TOTAL",rp(t.total));raw([27,69,0]);lr("Bayar",t.pay);
+ if(t.pay==="Tunai"){lr("Tunai",rp(t.cash));lr("Kembali",rp(Math.max(0,t.change)))}
+ hr();ctr("Terima kasih");ctr("Selamat jalan, berkendara aman");
+ raw([27,100,4,29,86,66,0]);return new Uint8Array(o)}
+function chunks(u,sz){var a=[];for(var i=0;i<u.length;i+=sz)a.push(u.slice(i,i+sz));return a}
+function setP(type,send,name){P={type:type,send:send};$("pstat").textContent="Tersambung: "+name+" ("+type+"). Pilih mode “Langsung ke printer ESC/POS” lalu simpan pengaturan."}
+function pfail(e){if(e&&e.name!=="NotFoundError")toast("Gagal menyambung: "+(e.message||e.name||"izin ditolak"))}
+$("usbBtn").onclick=function(){if(!navigator.usb){toast("WebUSB tidak tersedia di browser atau tampilan ini");return}
+ navigator.usb.requestDevice({filters:[]}).then(function(dev){return dev.open().then(function(){return dev.configuration?0:dev.selectConfiguration(1)}).then(function(){
+  var pick=null;dev.configuration.interfaces.forEach(function(i){i.alternates.forEach(function(a){a.endpoints.forEach(function(e){if(e.direction==="out"&&e.type==="bulk"&&(!pick||a.interfaceClass===7))pick={i:i.interfaceNumber,e:e.endpointNumber}})})});
+  if(!pick)throw new Error("Endpoint printer tidak ditemukan");
+  return dev.claimInterface(pick.i).then(function(){setP("USB",function(u){return chunks(u,512).reduce(function(p,c){return p.then(function(){return dev.transferOut(pick.e,c)})},Promise.resolve())},dev.productName||"printer")})})}).catch(pfail)};
+$("btBtn").onclick=function(){if(!navigator.bluetooth){toast("Web Bluetooth tidak tersedia di browser atau tampilan ini");return}
+ var dev,ch;navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:["000018f0-0000-1000-8000-00805f9b34fb","e7810a71-73ae-499d-8c15-faa9aef0c3f2","49535343-fe7d-4ae5-8fa9-9fafd205e455","0000ff00-0000-1000-8000-00805f9b34fb"]})
+ .then(function(d){dev=d;return d.gatt.connect()}).then(function(g){return g.getPrimaryServices()})
+ .then(function(ss){return Promise.all(ss.map(function(s){return s.getCharacteristics().catch(function(){return[]})}))})
+ .then(function(arr){ch=[].concat.apply([],arr).find(function(c){return c.properties.writeWithoutResponse||c.properties.write});if(!ch)throw new Error("Karakteristik tulis tidak ditemukan");
+  setP("Bluetooth",function(u){var fn=ch.properties.writeWithoutResponse&&ch.writeValueWithoutResponse?"writeValueWithoutResponse":"writeValue";return chunks(u,100).reduce(function(p,c){return p.then(function(){return ch[fn](c)}).then(function(){return new Promise(function(r){setTimeout(r,20)})})},Promise.resolve())},dev.name||"printer")}).catch(pfail)};
+$("testBtn").onclick=function(){if(!P){toast("Sambungkan printer dulu");return}
+ var t={id:"TES-0000",when:nowWIB(),cashier:S.cashier,fuel:"Tes cetak",liter:1,price:1000,total:1000,pay:"Tunai",cash:1000,change:0,pump:"",plate:""};
+ P.send(enc(t,false)).then(function(){toast("Tes terkirim")}).catch(function(){toast("Tes gagal, cek koneksi printer")})};
+
+/* cadangan */
+$("expJson").onclick=function(){saveFile("cadangan-spbu-"+nowWIB().split("T")[0]+".json",JSON.stringify({v:1,settings:S,tx:T}))};
+$("impJson").onclick=function(){$("impFile").click()};
+$("impFile").onchange=function(){var f=this.files[0],inp=this;if(!f)return;var r=new FileReader();
+ r.onload=function(){try{var d=JSON.parse(r.result);if(!d||!Array.isArray(d.tx))throw 0;var ids={};T.forEach(function(t){ids[t.id]=1});
+  var add=d.tx.filter(function(t){return t&&typeof t.id==="string"&&typeof t.when==="string"&&/^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(t.when)&&typeof t.total==="number"&&typeof t.liter==="number"&&typeof t.price==="number"&&!ids[t.id]});
+  T=T.concat(add);sv("spbu_tx",T);
+  if(d.settings&&Array.isArray(d.settings.fuels)&&confirm("Timpa pengaturan saat ini dengan pengaturan dari cadangan?")){S=Object.assign({},DEF,d.settings);if(S.logo!==undefined&&String(S.logo).indexOf("data:image/")!==0)delete S.logo;sv("spbu_set",S);init();loadSet()}
+  toast(add.length+" transaksi diimpor")}catch(e){toast("File cadangan tidak valid")}inp.value=""};r.readAsText(f)};
+
+function init(){$("brand").textContent=S.name;fuelSel();$("cashier").value=S.cashier;
+ document.querySelector(".rc");sync("mode")}
+$("when").value=nowWIB();$("fDate").value=nowWIB().split("T")[0];
+init();
+})();
+</script>
+</body>
+</html>
